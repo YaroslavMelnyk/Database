@@ -1,19 +1,12 @@
 package db.lab2.model;
 
 import java.sql.Connection;
-import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.*;
 import db.lab2.view.View;
 
-/*
- * Первая компонента/модуль — так называемая модель. Она содержит всю бизнес-логику приложения. 
- * Модель — самая независимая часть системы. Настолько независимая, что она не должна ничего знать о модулях Вид и Контроллер. 
- * Модель настолько независима, что ее разработчики могут практически ничего не знать о Виде и Контроллере.
- * */
 
 public class Model {
 	private static Connection connection = null;

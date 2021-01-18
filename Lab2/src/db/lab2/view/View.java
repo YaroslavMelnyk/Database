@@ -1,19 +1,11 @@
 package db.lab2.view;
 
 import db.lab2.model.Model;
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.Scanner;
 
-/*
- * Вторая часть системы — вид. Данный модуль отвечает за отображение данных пользователю. 
- * Все, что видит пользователь, генерируется видом.
- * Основное предназначение Вида — предоставлять информацию из Модели в удобном для восприятия пользователя формате. 
- * Основное ограничение Вида — он никак не должен изменять модель. 
- * */
+
 
 public class View {
 	public static void printTable(ResultSet rs, int size) {
