@@ -133,7 +133,7 @@ public class Model {
 	
 	private static boolean ramdomReader(int numberColumns) {
 		String ramdomReader = "INSERT INTO reader (reader_id, reader_name, reader_surname, reader_email)"
-				+ "SELECT trunc(10 + random()*1000)::int, "
+				+ "SELECT trunc(10 + random()*10000000)::int, "
 				+ "chr(trunc(65+random()*25)::int) || chr(trunc(65+random()*25)::int) ||"
 				+ "chr(trunc(65+random()*25)::int) || chr(trunc(65+random()*25)::int) ||"
 				+ "chr(trunc(65+random()*25)::int) || chr(trunc(65+random()*25)::int),"
@@ -157,7 +157,7 @@ public class Model {
 	
 	private static boolean ramdomAuthor(int numberColumns) {
 		String ramdomAuthor = "INSERT INTO author (author_id, author_name, author_surname, author_email)"
-				+ "SELECT trunc(10 + random()*1000)::int, "
+				+ "SELECT trunc(10 + random()*10000)::int, "
 				+ "chr(trunc(65+random()*25)::int) || chr(trunc(65+random()*25)::int) ||"
 				+ "chr(trunc(65+random()*25)::int) || chr(trunc(65+random()*25)::int) ||"
 				+ "chr(trunc(65+random()*25)::int) || chr(trunc(65+random()*25)::int),"
@@ -181,13 +181,13 @@ public class Model {
 	
 	private static boolean ramdomBook(int numberColumns) {
 		String ramdomBook = "INSERT INTO book (book_id, book_name, author_id, year_publication, count_books)\r\n"
-				+ "(SELECT trunc(random()*1000)::int,\r\n"
+				+ "(SELECT trunc(random()*10000)::int,\r\n"
 				+ "chr(trunc(65+random()*25)::int) || chr(trunc(65+random()*25)::int) ||\r\n"
 				+ "chr(trunc(65+random()*25)::int) || chr(trunc(65+random()*25)::int) ||\r\n"
 				+ "chr(trunc(65+random()*25)::int) || chr(trunc(65+random()*25)::int),\r\n"
 				+ "author_id,\r\n"
 				+ "trunc(1960 + random()*150)::int,\r\n"
-				+ "trunc(random()*1000)::int\r\n"
+				+ "trunc(random()*10000)::int\r\n"
 				+ "FROM author tablesample BERNOULLI(100)\r\n"
 				+ "ORDER BY random())  LIMIT " + numberColumns;
 		try {
@@ -205,7 +205,7 @@ public class Model {
 		String ramdomReaderTicket = "INSERT INTO reader_ticket (reader_id, book_id, date_issued, validity)\r\n"
 				+ "(SELECT reader_id, book_id,\r\n"
 				+ "date '2012-01-01' + trunc(random() * 100 * (date '2020-05-20' - date '2012-01-01'))::int,\r\n"
-				+ "trunc(15 + random()*1000)::int\r\n"
+				+ "trunc(15 + random()*10000)::int\r\n"
 				+ "FROM reader, book tablesample BERNOULLI(100)\r\n"
 				+ "ORDER BY random())  LIMIT " + numberColumns;
 		try {
@@ -264,20 +264,22 @@ public class Model {
 	
 	// return the most popular authors and their books
 	public static void countPopularAuthor(String date) {
-		String countPopularAuthor = "SELECT author_name, author_surname, book_name, ticket_count\r\n"
+		String countPopularAuthor = "SELECT author_name, author_surname, count(*) AS ticket_count\r\n"
 				+ "FROM author AS a INNER JOIN\r\n"
-				+ "(SELECT rt.book_id, book_name, author_id, count(*) AS ticket_count \r\n"
+				+ "(SELECT rt.book_id, book_name, author_id, count(*) AS ticket_count\r\n"
 				+ "FROM book AS b INNER JOIN\r\n"
-				+ "(SELECT book_id, date_issued FROM reader_ticket WHERE date_issued > '" + date + "')\r\n"
+				+ "(SELECT book_id, date_issued FROM reader_ticket WHERE date_issued > '2015-10-10')\r\n"
 				+ "AS rt ON b.book_id = rt.book_id\r\n"
 				+ "GROUP BY rt.book_id, b.book_name, author_id\r\n"
-				+ "ORDER BY ticket_count desc) \r\n"
-				+ "AS res ON res.author_id = a.author_id";
+				+ "ORDER BY ticket_count desc)\r\n"
+				+ "AS res ON res.author_id = a.author_id\r\n"
+				+ "GROUP BY author_name, author_surname\r\n"
+				+ "ORDER BY ticket_count desc";
 		String explainCountPopularAuthor = "EXPLAIN ANALYZE (" + countPopularAuthor + ")";
 		try {
 			Statement statement = connection.createStatement();
 			ResultSet rs = statement.executeQuery(countPopularAuthor);
-			View.printTable(rs, 4);
+			View.printTable(rs, 3);
 			rs = statement.executeQuery(explainCountPopularAuthor);
 			View.printExplain(rs);
 			statement.close();

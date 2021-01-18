@@ -91,7 +91,7 @@ public class View {
 		System.out.print("Input table: ");
 		result[0] = in.nextLine();
 		
-		System.out.print("Input the name of the column by which the data will be displayed: ");
+		System.out.print("Input the name of the column by which the data will be displayed(if delete all data in table input 'null'): ");
 		result[1] = in.nextLine();
 		
 		System.out.print("Input value column: ");
